@@ -14,7 +14,7 @@ model: sonnet
 검색 방법은 code-search 스킬(`~/.claude/skills/code-search/SKILL.md`, 플러그인이면 플러그인 폴더의 `skills/code-search/SKILL.md`)의 1단계 해당 갈래를 그대로 따른다. 파일을 찾을 수 없으면 아래 요점만으로 진행한다.
 
 - GitHub: `gh search repos` 를 핵심어 2~3개 조합으로 여러 번, `--topic` 으로 한 번 더. 함수·클래스 이름은 `gh search code` (분당 10회 제한).
-- 논문 구현: `https://huggingface.co/api/papers/<arXiv ID>` 의 `githubRepo`, 키워드는 `https://huggingface.co/api/papers/search?q=`, arXiv 초록·1면의 코드 링크, Zenodo `https://zenodo.org/api/records?q=<검색어>&type=software`.
+- 논문 구현: `https://huggingface.co/api/papers/<arXiv ID>` 의 `githubRepo`, 키워드는 `https://huggingface.co/api/papers/search?q=`, Papers with Code `https://paperswithcode.co/api/v1/papers/arxiv/<arXiv ID>?include_resources=true` 의 `repositories[]`(`is_official`·`source`; 키워드는 `/api/v1/papers/search?q=<검색어>&mode=keyword`), arXiv 초록·1면의 코드 링크, Zenodo `https://zenodo.org/api/records?q=<검색어>&type=software`.
 - 모델·데이터: `https://huggingface.co/api/models?search=`, `/api/datasets?search=`, `/api/spaces?search=`.
 - 패키지: 이름은 WebSearch(`site:pypi.org <검색어>`, `<검색어> R package CRAN`)·GitHub 결과·논문에서 얻는다. 이름을 추측해서 조회하지 않는다. 확인은 `https://pypi.org/pypi/<이름>/json`, `https://crandb.r-pkg.org/<패키지>`. r-universe 검색은 여러 단어 검색어에서 노이즈가 많으니 한 단어 고유 용어에만 쓴다. CRAN Task View 도 본다.
 - WebSearch·WebFetch 가 지연 로드 도구로만 보이면 ToolSearch 로 먼저 불러온다.

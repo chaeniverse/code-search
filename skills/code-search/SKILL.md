@@ -1,6 +1,6 @@
 ---
 name: code-search
-description: 키워드·방법·논문에 맞는 공개 코드를 여러 경로(GitHub 저장소·코드 검색, 논문 공식 구현(HF Papers·arXiv·Zenodo), Hugging Face 모델·데이터셋, PyPI·CRAN·Bioconductor 패키지)로 찾고, 요청 조건과 신뢰도(공식 여부·유지보수·라이선스·재현성)로 걸러 Tier A/B로 나눈 뒤, 원하면 shallow clone 까지 해서 통합 정리한다. "코드 찾아줘", "구현체 있어?", "이 논문 공식 코드", "이 방법 파이썬/R 패키지", "깃허브에 비슷한 거", "재현 코드 모아줘", 논문 제목·arXiv ID 목록을 주며 코드를 찾아달라는 요청에 이 스킬을 쓴다.
+description: 키워드·방법·논문에 맞는 공개 코드를 여러 경로(GitHub 저장소·코드 검색, 논문 공식 구현(HF Papers·Papers with Code·arXiv·Zenodo), Hugging Face 모델·데이터셋, PyPI·CRAN·Bioconductor 패키지)로 찾고, 요청 조건과 신뢰도(공식 여부·유지보수·라이선스·재현성)로 걸러 Tier A/B로 나눈 뒤, 원하면 shallow clone 까지 해서 통합 정리한다. "코드 찾아줘", "구현체 있어?", "이 논문 공식 코드", "이 방법 파이썬/R 패키지", "깃허브에 비슷한 거", "재현 코드 모아줘", 논문 제목·arXiv ID 목록을 주며 코드를 찾아달라는 요청에 이 스킬을 쓴다.
 ---
 
 # 공개 코드 검색 · 선별 · 확보 · 정리
@@ -51,7 +51,7 @@ GitHub 검색 결과는 스타 순으로만 보면 오래되고 관리가 끊긴
 | 갈래 | 경로 | 쓰는 목적 |
 |---|---|---|
 | GitHub | `gh search repos`, `gh search code`, `gh api` | 기본 검색. 저장소 이름·설명·README·토픽, 함수·클래스 이름 |
-| 논문 구현 | HF Papers API, arXiv 초록·1면, Zenodo, `gh search code "<arXiv ID>"` | 논문 공식 코드, 재현 코드 |
+| 논문 구현 | HF Papers API, Papers with Code(paperswithcode.co) API, arXiv 초록·1면, Zenodo, `gh search code "<arXiv ID>"` | 논문 공식 코드, 재현 코드 |
 | 모델·데이터 | Hugging Face Hub API | 사전학습 가중치, 데이터셋, 데모(Spaces) |
 | 패키지 | PyPI JSON API, CRAN(crandb·r-universe·Task View), Bioconductor | 설치해서 바로 쓰는 라이브러리 |
 | 보완 | WebSearch | 위에서 안 잡힌 GitLab·개인 사이트·블로그 코드 |
@@ -75,7 +75,12 @@ gh search code "<함수·클래스 이름>" --language python --limit 30 --json 
 ### 논문 구현
 
 - HF Papers: `https://huggingface.co/api/papers/<arXiv ID>` 의 `githubRepo`·`githubStars`. 키워드로는 `https://huggingface.co/api/papers/search?q=<검색어>`. 논문에 연결된 모델·데이터셋·Spaces 는 `https://huggingface.co/api/arxiv/<arXiv ID>/repos`.
-- paperswithcode.com 은 HF Papers 로 넘어갔다(리다이렉트). 쓰지 않는다.
+- Papers with Code: Meta 가 닫은 paperswithcode.com 을 Hugging Face 가 `https://paperswithcode.co` 로 다시 연 사이트다. 옛 `.com` 주소는 쓰지 않는다.
+  - 논문별: `https://paperswithcode.co/api/v1/papers/arxiv/<arXiv ID>?include_resources=true` 의 `repositories[]`. 저장소마다 `url`·`is_official`·`num_stars`·`source`(`pwc_archive`·`ai_extraction`·`manual` 등)가 온다.
+  - 키워드: `https://paperswithcode.co/api/v1/papers/search?q=<검색어>&mode=keyword&page_size=20`. 결과에는 저장소 목록 없이 `has_official_implementation`·`code_repository_count` 만 오니, 코드가 있는 논문만 위 논문별 조회로 저장소를 본다.
+  - 과제(task)로 묶어 볼 때: `https://paperswithcode.co/api/v1/tasks/?q=<검색어>` 로 과제 id 를 얻고 `https://paperswithcode.co/api/v1/papers/?task=<과제 id>&page_size=20`.
+  - `is_official` 은 근거 하나로만 친다. `source` 가 `ai_extraction` 이면 자동 추출이라 틀릴 수 있으니 arXiv 링크·저자 소유로 다시 확인한다. HF Papers 의 `githubRepo` 와 다르면 둘 다 적고 1단계 "식별과 중복 제거" 대로 묻는다.
+  - 요청 제한은 IP 당 분당 60회(검색·목록)~120회(상세)다. 목록형 요청에서 논문이 많으면 나눠서 조회한다.
 - arXiv: 초록(`https://arxiv.org/abs/<id>`)과 1면(`https://arxiv.org/html/<id>`)에서 "code is available at" 같은 링크를 찾는다. 이 링크가 공식 구현의 가장 강한 근거다.
 - 저널 논문: 본문의 Code availability / Data availability 절. 원문은 lit-search 로 받은 PDF 를 읽는다.
 - Zenodo: `https://zenodo.org/api/records?q=<검색어>&type=software&size=20`. 의학·통계 논문의 재현 코드가 GitHub 릴리스 사본으로 많이 올라 있다. `related_identifiers` 에 원 저장소가 있다.
@@ -122,7 +127,7 @@ gh api repos/<owner>/<repo>/contents/.github/workflows --jq '.[].name'          
 
 | 신호 | 보는 것 |
 |---|---|
-| 공식 여부 | 논문·패키지 문서가 이 저장소를 가리키는가, 소유자가 저자·연구실·기관인가. 패키지는 방법 논문의 저자가 CRAN `Authors@R`·PyPI 메타에 있으면 공식으로 본다. 유지자 본인 패키지라도 방법 원저자가 아니면 제3자 구현 |
+| 공식 여부 | 논문·패키지 문서가 이 저장소를 가리키는가(HF Papers `githubRepo`, Papers with Code `is_official` 포함), 소유자가 저자·연구실·기관인가. 패키지는 방법 논문의 저자가 CRAN `Authors@R`·PyPI 메타에 있으면 공식으로 본다. 유지자 본인 패키지라도 방법 원저자가 아니면 제3자 구현 |
 | 유지보수 | 마지막 커밋(기본 브랜치의 최신 커밋 날짜. `pushed_at` 은 다른 브랜치 push 도 포함하므로 쓰지 않는다), 최근 릴리스(가중치만 올린 릴리스는 버전으로 치지 않는다), archived 여부, 열린 이슈에 답이 달리는가 |
 | 라이선스 | SPDX 값. null 이면 라이선스 없음 → 가져다 쓰기 불가. `NOASSERTION` 은 GitHub 가 파일을 못 읽은 것이니 LICENSE 파일과 CRAN·PyPI 표기를 확인해 그 값을 쓰고 출처를 함께 적는다(예: `MIT (CRAN 표기, GitHub NOASSERTION)`). GPL 계열이면 가져다 쓸 때 조건을 적는다 |
 | 재현성 | `requirements.txt`·`environment.yml`·`pyproject.toml`·`renv.lock`·`DESCRIPTION`·Dockerfile, 가중치 공개, 데이터 받는 법 |
@@ -152,7 +157,7 @@ Tier A로 올리는 기준 (많이 만족할수록 위):
 ## 3. 후보 확인
 
 후보 목록을 짧게 보여준다: 구분(Tier), 이름(`owner/repo` 또는 패키지명), 종류, 언어, 라이선스, 마지막 커밋, 공식 여부, 왜 골랐는지 한 줄.
-- 목록형 요청이면 논문마다 찾은 저장소가 공식인지, 근거가 무엇인지(논문 본문 링크 / HF Papers 연결 / 저자 소유) 표시한다. 못 찾았거나 후보가 여러 개면 그렇다고 말한다.
+- 목록형 요청이면 논문마다 찾은 저장소가 공식인지, 근거가 무엇인지(논문 본문 링크 / HF Papers 연결 / Papers with Code 공식 표시 / 저자 소유) 표시한다. 못 찾았거나 후보가 여러 개면 그렇다고 말한다.
 - 사용자가 빼거나 올리라고 한 것만 바꾸고 다음 단계로 간다.
 - clone 범위: 사용자가 원하면 기본은 Tier A 전부(목록형은 전부). 10개가 넘거나 하나가 1GB 를 넘으면 범위를 묻는다(`gh api repos/<o>/<r> --jq .size` 는 KB 단위).
 

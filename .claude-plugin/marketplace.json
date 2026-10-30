@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "code-search",
-      "description": "Find, vet, and optionally shallow-clone public code (GitHub, official paper implementations, Hugging Face, PyPI/CRAN) for a keyword, method, or paper list in Claude Code.",
+      "description": "Find, vet, and optionally shallow-clone public code (GitHub, official paper implementations via HF Papers and Papers with Code, Hugging Face, PyPI/CRAN) for a keyword, method, or paper list in Claude Code.",
       "source": "./",
       "category": "productivity",
       "homepage": "https://github.com/chaeniverse/code-search"

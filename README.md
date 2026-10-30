@@ -2,13 +2,13 @@
 
 키워드·방법·논문에 맞는 공개 코드를 찾고, 믿을 만한지 확인하고, 원하면 받아서 정리하는 Claude Code 스킬(플러그인).
 
-A Claude Code skill and subagent for finding and vetting public code — GitHub repositories, official paper implementations, Hugging Face models/datasets, and PyPI/CRAN packages — for a keyword, method, or paper list, with optional read-only shallow clones. Instructions are written in Korean.
+A Claude Code skill and subagent for finding and vetting public code — GitHub repositories, official paper implementations (HF Papers, Papers with Code), Hugging Face models/datasets, and PyPI/CRAN packages — for a keyword, method, or paper list, with optional read-only shallow clones. Instructions are written in Korean.
 
 ## 하는 일
 
 키워드(또는 논문 제목·arXiv ID 목록, 패키지 이름)를 주면 포함 조건 한 줄 → 여러 경로 검색 → 중복·fork 정리 → 신뢰도 확인 → Tier A/B → (원하면) shallow clone → 코드 카드로 정리한다.
 
-- 검색 경로: GitHub(`gh search repos`·`gh search code`) · 논문 구현(HF Papers · arXiv · Zenodo) · Hugging Face Hub · PyPI · CRAN · Bioconductor
+- 검색 경로: GitHub(`gh search repos`·`gh search code`) · 논문 구현(HF Papers · Papers with Code · arXiv · Zenodo) · Hugging Face Hub · PyPI · CRAN · Bioconductor
 - 신뢰도 신호: 공식 여부, 마지막 커밋·릴리스·archived, 라이선스, 환경 파일·가중치 공개, tests·CI. 스타 수는 다른 신호를 대신하지 않는다
 - 갈래가 셋 이상이면 `code-scout` 서브에이전트를 갈래마다 병렬로 띄운다
 - 하지 않는 것: 받은 코드 실행, 라이선스 없는 코드 복사, 이슈·스타·fork 같은 외부 동작, 미발표 연구 세부를 검색어에 넣기
