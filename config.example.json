@@ -1,0 +1,5 @@
+{
+  "code_root": "~/Code/code-search",
+  "default_languages": ["python", "r"],
+  "json_export_dir": ""
+}

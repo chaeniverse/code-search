@@ -1,0 +1,19 @@
+{
+  "name": "code-search",
+  "description": "Find, vet, and optionally shallow-clone public code (GitHub, official paper implementations, Hugging Face, PyPI/CRAN) for a keyword, method, or paper list in Claude Code.",
+  "version": "0.1.0",
+  "author": {
+    "name": "chaeniverse"
+  },
+  "homepage": "https://github.com/chaeniverse/code-search",
+  "license": "MIT",
+  "keywords": [
+    "code",
+    "github",
+    "implementation",
+    "huggingface",
+    "pypi",
+    "cran",
+    "skill"
+  ]
+}
